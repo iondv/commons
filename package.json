@@ -1,0 +1,47 @@
+{
+  "name": "@iondv/commons",
+  "license": "Apache License 2.0",
+  "engines": {
+    "node": ">=13"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "bugs": {
+    "url": "https://github.com/iondv/framework/issues"
+  },
+  "private": true,
+  "repository": {
+    "url": "https://github.com/iondv/commons.git",
+    "type": "git"
+  },
+  "homepage": "https://iondv.com",
+  "version": "2.0.0",
+  "dependencies": {
+    "@iondv/auth-contracts": "iondv/auth-contracts#semver:^2.0.0",
+    "@iondv/commons-contracts": "iondv/commons-contracts#semver:^2.0.1",
+    "@iondv/core": "iondv/core#semver:^2.0.0",
+    "@iondv/db-contracts": "iondv/db-contracts#semver:^2.0.0",
+    "@iondv/i18n": "iondv/i18n#semver:^0.0.1",
+    "@iondv/meta-model-contracts": "iondv/meta-model-contracts#semver:^2.0.3",
+    "base64-js": "^1.5.1",
+    "cuid": "^2.1.8",
+    "ejs": "^3.1.6",
+    "expected-round": "^0.0.4",
+    "fast-clone": "^1.5.13",
+    "file-stream-rotator": "^0.5.7",
+    "memcached": "^2.2.2",
+    "merge": "^2.1.0",
+    "mkdirp": "^1.0.4",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.33",
+    "nearley": "^2.20.1",
+    "nodemailer": "^6.4.17",
+    "redis": "^3.0.2",
+    "request": "^2.88.2",
+    "sendmail": "^1.6.1",
+    "xmldom": "^0.4.0",
+    "xpath": "^0.0.32",
+    "xss": "^1.0.8"
+  }
+}
