@@ -7,6 +7,12 @@
   "directories": {
     "test": "test"
   },
+  "bin": {
+    "bg": "bin/bg.js",
+    "job-runner": "bin/job-runner.js",
+    "job": "bin/job.js",
+    "schedule": "bin/schedule.js"
+  },  
   "bugs": {
     "url": "https://github.com/iondv/framework/issues"
   },
@@ -16,7 +22,7 @@
     "type": "git"
   },
   "homepage": "https://iondv.com",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "dependencies": {
     "@iondv/auth-contracts": "iondv/auth-contracts#semver:^2.0.0",
     "@iondv/commons-contracts": "iondv/commons-contracts#semver:^2.0.1",
