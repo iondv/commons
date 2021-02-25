@@ -26,7 +26,7 @@
   "dependencies": {
     "@iondv/auth-contracts": "iondv/auth-contracts#semver:^2.0.0",
     "@iondv/commons-contracts": "iondv/commons-contracts#semver:^2.0.1",
-    "@iondv/core": "iondv/core#semver:^2.0.0",
+    "@iondv/core": "iondv/core#semver:^2.0.4",
     "@iondv/db-contracts": "iondv/db-contracts#semver:^2.0.0",
     "@iondv/i18n": "iondv/i18n#semver:^0.0.1",
     "@iondv/meta-model-contracts": "iondv/meta-model-contracts#semver:^2.0.3",
