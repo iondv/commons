@@ -41,7 +41,7 @@ if (params.path) {
   moduleName = path.basename(params.path);
 }
 
-load(path.normalize(path.join(__dirname, '..', 'i18n')), null, config.lang)
+load(path.normalize(path.join(process.cwd(), 'i18n')), null, config.lang)
   .then(() => di(
     'boot',
     extend(

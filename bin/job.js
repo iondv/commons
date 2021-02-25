@@ -21,7 +21,7 @@ let jobName = false;
 let job = false;
 let notifier = null;
 
-load(path.normalize(path.join(__dirname, '..', 'i18n')), null, config.lang)
+load(path.normalize(path.join(process.cwd(), 'i18n')), null, config.lang)
   .then(() => {
     if (process.argv.length > 2) {
       jobName = process.argv[2];

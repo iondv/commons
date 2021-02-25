@@ -17,7 +17,7 @@ errorSetup();
 
 
 // jshint maxcomplexity: 20, maxstatements: 30
-load(path.normalize(path.join(__dirname, '..', 'i18n')), null, config.lang)
+load(path.normalize(path.join(process.cwd(), 'i18n')), null, config.lang)
   .then(() => di(
     'boot',
     extend(
