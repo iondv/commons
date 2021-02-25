@@ -20,6 +20,8 @@ module.exports = {
     period: require('./lib/period'),
     schedule: require('./lib/schedule'),
     storageDirectoryParser: require('./lib/storageDirectoryParser'),
-    strToDate: require('./lib/strToDate')
+    strToDate: require('./lib/strToDate'),
+    readConfig: require('./lib/config-reader'),
+    extendDi: require('./lib/extendModuleDi')
   }
 };

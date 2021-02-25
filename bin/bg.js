@@ -3,19 +3,19 @@
 /**
  * Created by krasilneg on 19.07.17.
  */
-const config = require('../config');
-const di = require('core/di');
-
-const IonLogger = require('core/impl/log/IonLogger');
-const sysLog = new IonLogger(config.log || {});
-const errorSetup = require('core/error-setup');
-const alias = require('core/scope-alias');
-const extendDi = require('core/extendModuleDi');
-const {s} = require('core/strings');
 const extend = require('extend');
 const path = require('path');
 const {format} = require('util');
-const {t, lang, load} = require('core/i18n');
+
+const config = require(path.join(process.cwd(), 'config'));
+const { di, utils: { errorSetup } } = require('@iondv/core');
+const IonLogger = require('../lib/log/IonLogger');
+const { t, load, lang } = require('core/i18n');
+const { alias } = di;
+
+const sysLog = new IonLogger(config.log || {});
+
+const extendDi = require('../lib/extendModuleDi');
 
 lang(config.lang);
 errorSetup();
@@ -42,7 +42,24 @@ if (params.path) {
 }
 
 load(path.normalize(path.join(__dirname, '..', 'i18n')), null, config.lang)
-  .then(() => di('boot', config.bootstrap, {sysLog: sysLog}, null, ['rtEvents']))
+  .then(() => di(
+    'boot',
+    extend(
+      true,
+      {
+        settings: {
+          module: path.normalize(path.join(__dirname, '..', 'lib', 'settings', 'SettingsRepository')),
+          initMethod: 'init',
+          initLevel: 1,
+          options: {
+            logger: 'ion://sysLog'
+          }
+        }
+      },
+      config.bootstrap
+    ),
+    { sysLog: sysLog }
+  ))
   .then(scope =>
     di(
       'app',
@@ -57,7 +74,7 @@ load(path.normalize(path.join(__dirname, '..', 'i18n')), null, config.lang)
       ),
       {},
       'boot',
-      ['background', 'sessionHandler', 'scheduler', 'application', 'module'],
+      [],
       params.path
     )
   )

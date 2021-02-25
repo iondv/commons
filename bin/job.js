@@ -1,20 +1,19 @@
-/* eslint no-process-exit:off */
 'use strict';
-/* eslint no-process-exit:off */
 /**
  * Created by krasilneg on 19.07.17.
  */
-const config = require('../config');
-const di = require('core/di');
-
-const IonLogger = require('core/impl/log/IonLogger');
-const sysLog = new IonLogger(config.log || {});
-const errorSetup = require('core/error-setup');
-const alias = require('core/scope-alias');
 const path = require('path');
 const extend = require('extend');
-const {format} = require('util');
-const {t, lang, load} = require('core/i18n');
+const { format } = require('util');
+
+const config = require(path.join(process.cwd(), 'config'));
+const { di, utils: { errorSetup } } = require('@iondv/core');
+const IonLogger = require('../lib/log/IonLogger');
+const { t, load, lang } = require('core/i18n');
+const { alias } = di;
+
+const sysLog = new IonLogger(config.log || {});
+
 lang(config.lang);
 errorSetup();
 
@@ -30,18 +29,33 @@ load(path.normalize(path.join(__dirname, '..', 'i18n')), null, config.lang)
       console.error(t('Job name not specified'));
       process.exit(130);
     }    
-    return di('boot', config.bootstrap, {sysLog: sysLog}, null, ['rtEvents']);
+    return di(
+      'boot',
+      extend(
+        true,
+        {
+          settings: {
+            module: path.normalize(path.join(__dirname, '..', 'lib', 'settings', 'SettingsRepository')),
+            initMethod: 'init',
+            initLevel: 1,
+            options: {
+              logger: 'ion://sysLog'
+            }
+          }
+        },
+        config.bootstrap
+      ),
+      { sysLog: sysLog }
+    );
   })
   .then(scope =>
     di(
       'app',
       extend(true, config.di, scope.settings.get('plugins') || {}),
       {},
-      'boot',
-      ['auth', 'sessionHandler', 'background', 'scheduler', 'application']
+      'boot'
     )
   )
-  .then(scope => alias(scope, scope.settings.get('di-alias')))
   .then(
     /**
      * @param {{}} scope
@@ -56,17 +70,30 @@ load(path.normalize(path.join(__dirname, '..', 'i18n')), null, config.lang)
         typeof jobs[jobName] === 'object'
       ) {
         job = jobs[jobName];
-        notifier = scope.notifier;
         if (!job.worker) {
           throw new Error(format(t('Worker component not specified for job %s'), jobName));
         }
-        return di('job', jobs[jobName].di || {}, {}, 'app');
+        return di(
+          'app',
+          di.extract(
+            [job.worker],
+            extend(
+              true,
+              config.di,
+              scope.settings.get('plugins') || {},
+              jobs[jobName].di || {}
+            )
+          ),
+          {}
+        );
       } else {
         throw new Error(format(t('Job %s not found'), jobName));
       }
     }
   )
+  .then(scope => alias(scope, scope.settings.get('di-alias')))
   .then((scope) => {
+    notifier = scope.notifier;
     let worker = scope[job.worker];
     if (!worker) {
       throw new Error(format(t('Worker component of job %s not found'), jobName));

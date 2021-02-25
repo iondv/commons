@@ -6,14 +6,16 @@
 const child = require('child_process');
 const moment = require('moment');
 const path = require('path');
-const config = require('../config');
-const di = require('core/di');
-const IonLogger = require('core/impl/log/IonLogger');
+const { format } = require('util');
+
+
+const config = require(path.join(process.cwd(), 'config'));
+const { di, utils: { errorSetup, toAbsolute: toAbsolutePath } } = require('@iondv/core');
+const IonLogger = require('../lib/log/IonLogger');
+const { t, load, lang } = require('core/i18n');
+
 const sysLog = new IonLogger(config.log || {});
-const errorSetup = require('core/error-setup');
-const {format} = require('util');
-const toAbsolutePath = require('core/system').toAbsolute;
-const {t, lang, load} = require('core/i18n');
+
 lang(config.lang);
 
 errorSetup();
@@ -140,7 +142,24 @@ load(path.normalize(path.join(__dirname, '..', 'i18n')), null, config.lang)
       console.error(t('Job name not specified'));
       process.exit(130);
     }    
-    return di('boot', config.bootstrap, {sysLog: sysLog}, null, ['rtEvents']);
+    return di(
+      'boot',
+      extend(
+        true,
+        {
+          settings: {
+            module: path.normalize(path.join(__dirname, '..', 'lib', 'settings', 'SettingsRepository')),
+            initMethod: 'init',
+            initLevel: 1,
+            options: {
+              logger: 'ion://sysLog'
+            }
+          }
+        },
+        config.bootstrap
+      ),
+      { sysLog: sysLog }
+    );
   })
   .then(
     /**
@@ -198,7 +217,7 @@ load(path.normalize(path.join(__dirname, '..', 'i18n')), null, config.lang)
                 return a.indexOf(v) === i;
               });
             }
-            let ch = child.fork(toAbsolutePath('bin/job'), [jobName], chopts);
+            let ch = child.fork('bin/job', [jobName], chopts);
             let rto = setTimeout(() => {
               if (ch.connected) {
                 sysLog.warn(format(t('%s: Job %s was interrupted by timeout'), new Date().toISOString(), jobName));

@@ -3,25 +3,63 @@
 /**
  * Created by krasilneg on 19.07.17.
  */
-const config = require('../config');
-const di = require('core/di');
-const extend = require('extend');
-const IonLogger = require('core/impl/log/IonLogger');
-const sysLog = new IonLogger(config.log || {});
-const errorSetup = require('core/error-setup');
 const path = require('path');
-const {t, load, lang} = require('core/i18n');
+const extend = require('extend');
+
+const config = require(path.join(process.cwd(), 'config'));
+const { di, utils: { errorSetup } } = require('@iondv/core');
+const IonLogger = require('../lib/log/IonLogger');
+const { t, load, lang } = require('core/i18n');
+
+const sysLog = new IonLogger(config.log || {});
 lang(config.lang);
 errorSetup();
 
 
 // jshint maxcomplexity: 20, maxstatements: 30
 load(path.normalize(path.join(__dirname, '..', 'i18n')), null, config.lang)
-  .then(() => di('boot', config.bootstrap, {sysLog: sysLog}, null, ['rtEvents']))
+  .then(() => di(
+    'boot',
+    extend(
+      true,
+      {
+        settings: {
+          module: path.normalize(path.join(__dirname, '..', 'lib', 'settings', 'SettingsRepository')),
+          initMethod: 'init',
+          initLevel: 1,
+          options: {
+            logger: 'ion://sysLog'
+          }
+        }
+      },
+      config.bootstrap
+    ),
+    { sysLog: sysLog }
+  ))
   .then(scope =>
     di(
       'app',
-      di.extract('scheduler', extend(true, config.di, scope.settings.get('plugins') || {})),
+      di.extract(
+        'scheduler',
+        extend(
+          true,
+          {
+            kvRepo: {
+              module: path.normalize(path.join(__dirname, '..', 'lib', 'cache', 'InnerCacheRepository'))
+            },
+            scheduler: {
+              module: path.normalize(path.join(__dirname, '..', 'lib', 'Scheduler')),
+              options: {
+                settings: 'ion://settings',
+                repo: 'ion://kvRepo',
+                log: 'ion://sysLog'
+              }
+            }
+          },
+          config.di,
+          scope.settings.get('plugins') || {}
+        )
+      ),
       {},
       'boot'
     )
@@ -32,9 +70,7 @@ load(path.normalize(path.join(__dirname, '..', 'i18n')), null, config.lang)
      * @param {SettingsRepository} [scope.settings]
      * @returns {Promise}
      */
-    (scope) => {
-      return scope.scheduler.start();
-    }
+    (scope) => scope.scheduler.start()
   )
   .then(() => {
     sysLog.info(t('Schedule started'));
