@@ -7,7 +7,7 @@ const extend = require('extend');
 const { format } = require('util');
 
 const config = require(path.join(process.cwd(), 'config'));
-const { di, utils: { errorSetup } } = require('@iondv/core');
+const { di } = require('@iondv/core');
 const IonLogger = require('../lib/log/IonLogger');
 const { t, load, lang } = require('core/i18n');
 const { alias } = di;
@@ -15,7 +15,6 @@ const { alias } = di;
 const sysLog = new IonLogger(config.log || {});
 
 lang(config.lang);
-errorSetup();
 
 let jobName = false;
 let job = false;

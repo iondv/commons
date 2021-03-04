@@ -7,14 +7,12 @@ const path = require('path');
 const extend = require('extend');
 
 const config = require(path.join(process.cwd(), 'config'));
-const { di, utils: { errorSetup } } = require('@iondv/core');
+const { di } = require('@iondv/core');
 const IonLogger = require('../lib/log/IonLogger');
 const { t, load, lang } = require('core/i18n');
 
 const sysLog = new IonLogger(config.log || {});
 lang(config.lang);
-errorSetup();
-
 
 // jshint maxcomplexity: 20, maxstatements: 30
 load(path.normalize(path.join(process.cwd(), 'i18n')), null, config.lang)
