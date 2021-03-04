@@ -12,7 +12,7 @@
     "job-runner": "bin/job-runner.js",
     "job": "bin/job.js",
     "schedule": "bin/schedule.js"
-  },  
+  },
   "bugs": {
     "url": "https://github.com/iondv/framework/issues"
   },
@@ -32,10 +32,12 @@
     "@iondv/meta-model-contracts": "iondv/meta-model-contracts#main",
     "base64-js": "^1.5.1",
     "cuid": "^2.1.8",
+    "dotenv": "^8.2.0",
     "ejs": "^3.1.6",
     "expected-round": "^0.0.4",
     "fast-clone": "^1.5.13",
     "file-stream-rotator": "^0.5.7",
+    "ini": "^2.0.0",
     "memcached": "^2.2.2",
     "merge": "^2.1.0",
     "mkdirp": "^1.0.4",
