@@ -13,6 +13,7 @@ module.exports = {
   EventNotifier: require('./lib/EventNotifier'),
   Scheduler: require('./lib/Scheduler'),
   SchedulerAgent: require('./lib/SchedulerAgent'),
+  CustomProfile: require('./lib/CustomProfile'),
   utils: {
     bulkNotifier: require('./lib/bulkNotifier'),
     duration: require('./lib/duration'),
